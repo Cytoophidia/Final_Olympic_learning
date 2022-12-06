@@ -11,7 +11,7 @@ st.set_page_config(layout="wide")
 
 @st.cache
 def fetch_and_clean_data():
-    st.experimental_set_query_params(number=0,answer_lists = ["Innsbruck","Vancouver","Montreal","Athina"])
+    st.experimental_set_query_params(number=0,answer_lists = ["Innsbruck","Vancouver","Barcelona","Athina"])
 
 
 def add_bg_from_local(image):
