@@ -1,3 +1,5 @@
+import time
+
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -9,10 +11,13 @@ import base64
 st.set_page_config(layout="wide")
 
 
-@st.cache
+@st.cache(suppress_st_warning=True)
 def fetch_and_clean_data():
-    st.experimental_set_query_params(number=0,answer_lists = ["Innsbruck","Vancouver","Barcelona","Athina"])
-
+    st.experimental_set_query_params(number=0,answer_lists = ["Innsbruck","Vancouverxxx","Barcelona","Athina"])
+    number = int(st.experimental_get_query_params()["number"][0])
+    answers = st.experimental_get_query_params()["answer_lists"]
+    res = [number, answers]
+    return res
 
 def add_bg_from_local(image):
     with open(image, "rb") as image:
@@ -280,7 +285,7 @@ div[data-baseweb="tab-panel"] > div > div[data-testid="stVerticalBlock"]{
 </style>
 """, unsafe_allow_html=True)
 
-
+test = fetch_and_clean_data()
 # games
 # countries_list
 # countries_num
@@ -302,46 +307,51 @@ def change_question(question_year,city_list,question_size):
     st.experimental_set_query_params(number=random_num, answer_lists=answer_list)
 
 # get a defalt question number
-fetch_and_clean_data()
+
 random_num = int(st.experimental_get_query_params()["number"][0])
 answer_list = st.experimental_get_query_params()["answer_lists"]
 q1_question = question_year.at[random_num, "Year"]
 q1_correct_answer = question_year.at[random_num, "City"]
-# start = st.button("Start Quiz")
-# if start:
-#     change_question(question_year,city_list,question_size)
+
+
 
 st.markdown("<h1 style='text-align: center; color: rgb(256,256,256); font-size: 60px'>Quiz Part</h1>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center; color: rgb(256,256,256); font-size: 40px'>Where was the {0} Olympics held?</h1>".format(q1_question), unsafe_allow_html=True)
 
+with st.form("question"):
+
+    blank1,content,blank2 = st.columns([1,1,1])
+    with content:
+        q1_answer = st.radio(
+            label="Make a choice!",
+            options = answer_list
+        )
+        submit = st.form_submit_button("Check the Answer")
+        st.markdown(""" 
+        <style>
+        div.stButton > button:first-child {
+        background-color: #663399;color:white;font-size:20px;height:3em;width:20em;margin:0, auto;border-radius:10px 10px 10px 10px;
+        }
+        div[data-testid="column"] > div > div > div:first-child{
+            background-color: rgba(153,153,255,0.9)
+        }
+        </style>
+        """,unsafe_allow_html=True)
+
+    if submit:
+        if q1_answer == q1_correct_answer:
+            st.warning("Correct!!")
+        else:
+            st.warning("Opps, the {0} Olympics held in {1}".format(q1_question,q1_correct_answer))
+
 blank1,content,blank2 = st.columns([1,1,1])
 with content:
-    q1_answer = st.radio(
-        label="Make a choice!",
-        options = answer_list
-    )
-    submit = st.button("Check the Answer")
-    st.markdown(""" 
-    <style>
-    div.stButton > button:first-child {
-    background-color: #663399;color:white;font-size:20px;height:3em;width:20em;margin:0, auto;border-radius:10px 10px 10px 10px;
-    }
-    div[data-testid="column"] > div > div > div:first-child{
-        background-color: rgba(153,153,255,0.9)
-    }
-    </style>
-    """,unsafe_allow_html=True)
     next = st.button("Next Question")
+    if next:
+        change_question(question_year,city_list,question_size)
+        time.sleep(1)
+        st.experimental_rerun()
 
-
-if submit:
-    if q1_answer == q1_correct_answer:
-        st.warning("Correct!!")
-    else:
-        st.warning("Opps, the {0} Olympics held in {1}".format(q1_question,q1_correct_answer))
-if next:
-    change_question(question_year,city_list,question_size)
-    st.experimental_rerun()
 
 
 
