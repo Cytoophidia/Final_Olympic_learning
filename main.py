@@ -1,15 +1,11 @@
 import time
-
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import random
-
-
 import base64
 
 st.set_page_config(layout="wide")
-
 
 @st.cache(suppress_st_warning=True)
 def fetch_and_clean_data():
